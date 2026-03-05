@@ -1,0 +1,25 @@
+# Pipeline Configuration
+paths:
+  raw_data: "data/raw"
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  logs: "logs"
+
+csv_files:
+  baseline: "customers_1_full.csv"
+  incremental:
+    - "customers_2_.csv"
+    - "customers_3_.csv"
+    - "customers_4_.csv"
+    - "customers_5_.csv"
+
+json_files:
+  - "products.json"
+
+xlsx_files:
+  - name: "customer_order_sales_history_dirty_v2.xlsx"
+    sheets:
+      - "orders"
+      - "accounts"
+      - "sales_history"

@@ -1,0 +1,13 @@
+# Data
+data/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+
+# Logs
+logs/
+*.log
