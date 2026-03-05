@@ -12,7 +12,7 @@ from .data_transformation import DataTransformation
 logger = logging.getLogger(__name__)
 
 
-class JSONFlattening(DataTransformation):
+class ProductTransformation(DataTransformation):
     """
     Flatten nested product data JSON into a tabular Silver structure.
 
