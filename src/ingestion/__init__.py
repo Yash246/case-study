@@ -5,7 +5,7 @@ Each ingestion class reads a specific source format, validates the input,
 and saves a raw snapshot to the Bronze layer as parquet.
 
 Classes:
-    BaseIngestion: Abstract base defining the ingestion module.
+    DataIngestion: Abstract base defining the ingestion module.
     CSVIngestion: CSV files with watermark based incremental loads.
     JSONIngestion: JSON array files with structure validation.
     XLSXIngestion: Excel workbooks with per sheet extraction.
@@ -17,7 +17,7 @@ from .json_ingestion import JSONIngestion
 from .xlsx_ingestion import XLSXIngestion
 
 __all__ = [
-    "BaseIngestion",
+    "DataIngestion",
     "CSVIngestion",
     "JSONIngestion",
     "XLSXIngestion"
