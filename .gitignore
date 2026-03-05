@@ -11,3 +11,6 @@ notebooks/.ipynb_checkpoints/
 # Logs
 logs/
 *.log
+
+# Virtual environments
+venv/
