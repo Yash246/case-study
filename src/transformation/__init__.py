@@ -20,12 +20,14 @@ from .product_transformation import ProductTransformation
 from .orders_transformation import OrdersTransformation
 from .accounts_transformation import AccountsTransformation
 from .sales_transformation import SalesTransformation
+from .gold_transformation import GoldBuilder
 
 __all__ = [
-    "BaseTransformation",
+    "DataTransformation",
     "CustomerTransformation",
     "JSONFlattening",
     "OrdersTransformation",
     "AccountsTransformation",
-    "SalesTransformation"
+    "SalesTransformation",
+    "GoldBuilder"
 ]

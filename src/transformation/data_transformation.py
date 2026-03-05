@@ -119,7 +119,7 @@ class DataTransformation(ABC):
 
         return df
 
-    def _write(self, df: pl.DataFrame) -> Path:
+    def _write(self, result_df: pl.DataFrame) -> Path:
         """
         Write the transformed dataframe to parquet.
 
@@ -132,6 +132,6 @@ class DataTransformation(ABC):
 
         output_path = self._output_folder / self._get_output_filename()
 
-        df.write_parquet(output_path)
+        result_df.write_parquet(output_path)
 
         return output_path
