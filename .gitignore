@@ -1,0 +1,18 @@
+# Data
+data/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+__pycache__
+.vscode
+
+# Logs
+logs/
+*.log
+
+# Virtual environments
+venv/

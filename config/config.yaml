@@ -1,0 +1,60 @@
+# Pipeline Configuration
+paths:
+  raw_data: "data/raw"
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  watermark: "data/watermarks"
+  logs: "logs"
+
+csv_files:
+  baseline: "customers_1_full.csv"
+  incremental:
+    - "customers_2_.csv"
+    - "customers_3_.csv"
+    - "customers_4_.csv"
+    - "customers_5_.csv"
+
+json_files:
+  - "products.json"
+
+xlsx_files:
+  - name: "customer_order_sales_history_dirty_v2.xlsx"
+    sheets:
+      - "orders"
+      - "accounts"
+      - "sales_history"
+
+quality_rules:
+  customer:
+    required_columns:
+      - "customer_id"
+      - "name"
+      - "email"
+      - "age"
+      - "country"
+      - "last_updated"
+  orders:
+    required_columns:
+      - "order_id"
+      - "customer_id"
+      - "order_amount"
+      - "order_date"
+      - "order_status"
+      - "product_id"
+  accounts:
+    required_columns:
+      - "customer_id"
+      - "account_type"
+      - "country"
+  sales_history:
+    required_columns:
+      - "customer_id"
+      - "spend"
+      - "sales_amount"
+      - "channel"
+  product:
+    required_columns:
+      - "product_id"
+      - "name"
+      - "category"
