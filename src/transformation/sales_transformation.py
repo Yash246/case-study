@@ -145,6 +145,29 @@ class SalesTransformation(DataTransformation):
             .alias("spend_date_parsed")
         )
 
+        # convert date which is in long date format, ex - November 10, 2026
+        spend_series = sales_df["spend_clean"].to_list()
+        parsed_series = sales_df["spend_date_parsed"].to_list()
+        for idx, (raw, parsed) in enumerate(zip(spend_series, parsed_series)):
+            if parsed is not None or raw is None:
+                continue
+            try:
+                raw_str = str(raw).strip().strip('"')
+                parts = raw_str.replace(",", "").split()
+                if len(parts) == 3:
+                    month_name = parts[0].lower()
+                    if month_name in MONTH_MAP:
+                        day = int(parts[1])
+                        year = int(parts[2])
+                        parsed_series[idx] = pl.Series(
+                            [f"{year}-{MONTH_MAP[month_name]:02d}-{day:02d}"]
+                        ).str.to_datetime("%Y-%m-%d", strict=False)[0]
+            except (ValueError, IndexError, KeyError):
+                pass
+
+        sales_df = sales_df.with_columns(pl.Series("spend_date_parsed", parsed_series, dtype=pl.Datetime))
+        sales_df = sales_df.drop("spend_clean")
+
         return sales_df
 
     def _flag_future_dates(self, sales_df: pl.DataFrame) -> pl.DataFrame:
