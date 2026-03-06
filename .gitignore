@@ -7,6 +7,8 @@ notebooks/.ipynb_checkpoints/
 
 # Testing
 .pytest_cache/
+__pycache__
+.vscode
 
 # Logs
 logs/
