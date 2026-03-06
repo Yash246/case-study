@@ -97,8 +97,7 @@ class SalesTransformation(DataTransformation):
 
         return sales_df
 
-    @staticmethod
-    def _cast_types(sales_df: pl.DataFrame) -> pl.DataFrame:
+    def _cast_types(self, sales_df: pl.DataFrame) -> pl.DataFrame:
         """
         Cast string columns to appropriate numeric types.
         """
@@ -116,7 +115,7 @@ class SalesTransformation(DataTransformation):
 
         return sales_df
 
-    def _parse_spend_dates(sales_df: pl.DataFrame) -> pl.DataFrame:
+    def _parse_spend_dates(self, sales_df: pl.DataFrame) -> pl.DataFrame:
         """
         Parse the multi format spend column into a standar Datetime.
         """

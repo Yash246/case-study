@@ -79,7 +79,7 @@ class OrdersTransformation(DataTransformation):
 
         return orders_df
 
-    def _cast_types(orders_df: pl.DataFrame) -> pl.DataFrame:
+    def _cast_types(self, orders_df: pl.DataFrame) -> pl.DataFrame:
         """
         Cast string columns to appropriate types.
         """
@@ -97,7 +97,7 @@ class OrdersTransformation(DataTransformation):
 
         return orders_df
 
-    def _parse_order_dates(orders_df: pl.DataFrame) -> pl.DataFrame:
+    def _parse_order_dates(self, orders_df: pl.DataFrame) -> pl.DataFrame:
         """
         Parse mixed format date strings into a standardized datetime column.
         """

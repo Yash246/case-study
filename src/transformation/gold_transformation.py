@@ -47,7 +47,7 @@ class GoldBuilder(DataTransformation):
         orders_df = data
         customers_df: pl.DataFrame = kwargs["customers"]
         products_df: pl.DataFrame = kwargs["products"]
-        sales_history_df: pl.DataFrame = kwargs["sales_history"]
+        sales_df: pl.DataFrame = kwargs["sales_history"]
         accounts_df: pl.DataFrame | None = kwargs.get("accounts")
 
         logger.info("Building Gold table")
@@ -60,13 +60,13 @@ class GoldBuilder(DataTransformation):
         if "product_id" in gold_df.columns and "product_id" in products_df.columns:
             gold_df = gold_df.join(products_df, on="product_id", how="left", suffix="_prod")
 
-        if sales_history is not None:
-            sales_history = self._cast_key(sales_history, "customer_id", pl.Int64)
+        if sales_df is not None:
+            sales_df = self._cast_key(sales_df, "customer_id", pl.Int64)
 
             agg_exprs = []
 
             # calculate sales stats by customer for insights/analysis
-            if "sales_amount" in sales_history.columns:
+            if "sales_amount" in sales_df.columns:
                 agg_exprs.extend([
                     pl.col("sales_amount").sum().alias("total_sales_amount"),
                     pl.col("sales_amount").mean().alias("avg_sales_amount"),
@@ -74,7 +74,7 @@ class GoldBuilder(DataTransformation):
                 ])
 
             if agg_exprs:
-                sales_agg = sales_history.group_by("customer_id").agg(agg_exprs)
+                sales_agg = sales_df.group_by("customer_id").agg(agg_exprs)
                 gold_df = gold_df.join(sales_agg, on="customer_id", how="left", suffix="_sale")
 
         return gold_df

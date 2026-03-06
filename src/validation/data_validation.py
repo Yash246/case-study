@@ -70,7 +70,7 @@ class DataProfiler:
             null_count = df.select(pl.col(col).is_null().sum()).item()
             logger.debug(f"Column {col} has {null_count} null rows.")
 
-    def _check_empty_rows(df: pl.DataFrame) -> None:
+    def _check_empty_rows(self, df: pl.DataFrame) -> None:
         """
         Count rows where all values are null.
         """
@@ -78,7 +78,7 @@ class DataProfiler:
         all_null = pl.all_horizontal([pl.col(c).is_null() for c in df.columns])
         logger.debug(f"{all_null} null rows present in table.")
 
-    def _check_duplicates(df: pl.DataFrame, key: str | list[str]) -> None:
+    def _check_duplicates(self, df: pl.DataFrame, key: str | list[str]) -> None:
         """
         Detect duplicate rows based on a primary key.
         """
