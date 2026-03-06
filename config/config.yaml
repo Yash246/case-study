@@ -4,6 +4,7 @@ paths:
   bronze: "data/bronze"
   silver: "data/silver"
   gold: "data/gold"
+  watermark: "data/watermarks"
   logs: "logs"
 
 csv_files:
