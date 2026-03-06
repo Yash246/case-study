@@ -61,6 +61,7 @@ class PipelineConfig:
 
         return self._config["paths"]
 
+    @property
     def csv_files(self) -> dict[str, Any]:
         """
         Return the csv files section.
@@ -68,6 +69,7 @@ class PipelineConfig:
 
         return self._config["csv_files"]
 
+    @property
     def json_files(self) -> list[str]:
         """
         Return the json files section.
@@ -75,12 +77,21 @@ class PipelineConfig:
 
         return self._config["json_files"]
 
+    @property
     def xlsx_files(self) -> list[dict]:
         """
         Return the excel files section.
         """
 
         return self._config["xlsx_files"]
+
+    @property
+    def quality_rules(self) -> dict[str, Any]:
+        """
+        Return the quality_rules section with rule sets per table.
+        """
+
+        return self._config["quality_rules"]
 
     def raw_path(self) -> Path:
         """
@@ -109,3 +120,10 @@ class PipelineConfig:
         """
 
         return Path(self.paths["gold"])
+
+    def watermark_path(self) -> Path:
+        """
+        Return the path to the watermark storage folder.
+        """
+
+        return Path(self.paths["watermark"])
