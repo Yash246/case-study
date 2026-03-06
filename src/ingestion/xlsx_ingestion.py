@@ -66,8 +66,17 @@ class XLSXIngestion(DataIngestion):
             # clean and standardize
             headers = [str(h).strip().lower().replace(" ", "_") for h in rows[0]]
 
-            data_rows = [dict(zip(headers, row)) for row in rows[1:]]
-            df = pl.DataFrame(data_rows, infer_schema_length=1000)
+            # Convert every cell value to string to avoid mixed type schema errors.
+            data_rows = []
+            for row in rows[1:]:
+                data_rows.append(
+                    {
+                        h: (str(v).strip() if v is not None else None)
+                        for h, v in zip(headers, row)
+                    }
+                )
+
+            df = pl.DataFrame(data_rows, infer_schema_length=0)
 
             logger.info(f"Sheet {sheet_name} parsed")
 
