@@ -5,7 +5,6 @@ Coordinates the full Bronze -> Silver -> Gold data flow
 
 import logging
 import polars as pl
-from pathlib import Path
 from src.config import PipelineConfig
 from src.ingestion import CSVIngestion, JSONIngestion, XLSXIngestion
 from src.validation import DataProfiler
@@ -56,24 +55,23 @@ class DataPipeline:
         # 1. BRONZE: CSV customer ingestion
         logger.info("[1/7] Ingesting CSV baseline...")
         csv_ingestion = CSVIngestion(
-            raw_folder=self.cfg.raw_folder(),
-            bronze_folder=self.cfg.bronze_folder(),
-            watermark_folder=self.cfg.watermark_folder(),
+            raw_folder=self.cfg.raw_path(),
+            bronze_folder=self.cfg.bronze_path(),
+            watermark_folder=self.cfg.watermark_path(),
         )
 
-        customers_df = csv_ingestion.ingest_baseline(self.cfg.csv_files["baseline"])
+        customers_df = csv_ingestion.ingest(self.cfg.csv_files["baseline"])
         logger.info(f"[1/7] Baseline loaded: {customers_df.shape[0]} rows")
 
         logger.info("[1/7] Applying incremental loads...")
         for inc_file in self.cfg.csv_files["incremental"]:
-            before = customers_df.height
             customers_df = csv_ingestion.ingest_incremental(inc_file, customers_df)
 
         # 2. BRONZE: JSON product ingestion
         logger.info("[2/7] Ingesting JSON products...")
         json_ingestion = JSONIngestion(
-            raw_folder=self.cfg.raw_folder(),
-            bronze_folder=self.cfg.bronze_folder(),
+            raw_folder=self.cfg.raw_path(),
+            bronze_folder=self.cfg.bronze_path(),
         )
 
         raw_products = json_ingestion.ingest(self.cfg.json_files[0])
@@ -81,7 +79,7 @@ class DataPipeline:
         # 3. BRONZE: XLSX ingestion
         logger.info("[3/7] Ingesting XLSX...")
         xlsx_tables = self._ingest_sheets()
-        for name, tbl in xlsx_tables.items():
+        for name in xlsx_tables.keys():
             logger.info(f"[3/7] Sheet {name}")
 
         # 4. QUALITY CHECKS (Bronze)
@@ -90,7 +88,7 @@ class DataPipeline:
 
         # 5. SILVER: transformations
         logger.info("[5/7] Transforming to Silver layer...")
-        silver_folder = self.cfg.silver_folder()
+        silver_folder = self.cfg.silver_path()
 
         cust_transformation = CustomerTransformation(silver_folder)
         silver_customers = cust_transformation.transform(customers_df)
@@ -124,7 +122,7 @@ class DataPipeline:
 
         # 7. GOLD: unified table
         logger.info("[7/7] Building Gold unified tabl...")
-        gold_builder = GoldBuilder(self.cfg.gold_folder())
+        gold_builder = GoldBuilder(self.cfg.gold_path())
         gold = gold_builder.build(
             customers=silver_customers,
             orders=silver_orders,
@@ -135,13 +133,13 @@ class DataPipeline:
         logger.info(f"[7/7] Gold table: {gold.shape[0]} rows, {gold.shape[1]} columns")
 
         gold_checker = DataProfiler()
-        gold_checker.run_checks(gold)
+        gold_checker.run_checks(gold, "report_table")
 
         logger.info("PIPELINE COMPLETE")
         logger.info("Output files:")
-        logger.info(f"Bronze : {self.cfg.bronze_folder()}")
-        logger.info(f"Silver : {self.cfg.silver_folder()}")
-        logger.info(f"Gold   : {self.cfg.gold_folder()}")
+        logger.info(f"Bronze : {self.cfg.bronze_path()}")
+        logger.info(f"Silver : {self.cfg.silver_path()}")
+        logger.info(f"Gold   : {self.cfg.gold_path()}")
 
         return gold
 
@@ -154,13 +152,13 @@ class DataPipeline:
         """
 
         xlsx_cfg = self.cfg.xlsx_files[0]
-        xlsx_path = self.cfg.raw_folder() / xlsx_cfg["name"]
+        xlsx_path = self.cfg.raw_path() / xlsx_cfg["name"]
 
         if xlsx_path.exists():
             logger.info("Found XLSX file: %s", xlsx_path)
             xlsx_ingestion = XLSXIngestion(
-                raw_folder=self.cfg.raw_folder(),
-                bronze_folder=self.cfg.bronze_folder(),
+                raw_folder=self.cfg.raw_path(),
+                bronze_folder=self.cfg.bronze_path(),
             )
 
         return xlsx_ingestion.ingest(xlsx_cfg["name"], sheets=xlsx_cfg["sheets"])
